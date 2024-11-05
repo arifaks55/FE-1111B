@@ -1,0 +1,16 @@
+# .env dosyalarını hariç tutmak
+.env
+
+# Node.js bağımlılıkları
+node_modules/
+
+# Derlenen dosyalar
+dist/
+build/
+
+# Log dosyaları
+*.log
+
+# IDE dosyaları
+.vscode/
+.idea/

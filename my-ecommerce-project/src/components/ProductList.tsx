@@ -1,0 +1,41 @@
+// src/components/ProductList.tsx
+import React from 'react';
+import ProductCard from './ProductCard';
+
+interface Product {
+    id: number;
+    name: string;
+    short_explanation: string;
+    slug: string;
+    price_info: { total_price: number; discounted_price?: number };
+    photo_src: string;
+    comment_count: number;
+    average_star: number;
+}
+
+interface ProductListProps {
+    products: Product[];
+}
+
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+const ProductList: React.FC<ProductListProps> = ({ products }) => {
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {products.map((product) => (
+                <ProductCard
+                    key={product.id}
+                    id={product.id}
+                    name={product.name}
+                    photo_src={`${BASE_URL}${product.photo_src}`}
+                    price_info={{
+                        total_price: product.price_info.total_price,
+                        discounted_price: product.price_info.discounted_price
+                    }}
+                />
+            ))}
+        </div>
+    );
+};
+
+export default ProductList;
