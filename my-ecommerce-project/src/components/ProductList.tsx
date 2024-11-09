@@ -1,4 +1,3 @@
-// src/components/ProductList.tsx
 import React from 'react';
 import ProductCard from './ProductCard';
 
@@ -28,6 +27,8 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                     id={product.id}
                     name={product.name}
                     photo_src={`${BASE_URL}${product.photo_src}`}
+                    comment_count={product.comment_count}
+                    average_star={product.average_star}
                     price_info={{
                         total_price: product.price_info.total_price,
                         discounted_price: product.price_info.discounted_price

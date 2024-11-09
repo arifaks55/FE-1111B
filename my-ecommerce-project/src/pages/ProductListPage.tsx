@@ -1,62 +1,29 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { useLoaderData } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
+import { Product } from '../types/product';
 
-interface Product {
-  name: string;
-  short_explanation: string;
-  slug: string;
-  price_info: {
-    profit: number | null;
-    total_price: number;
-    discounted_price?: number | null;
-    price_per_servings?: number;
-    discount_percentage?: number;
-  };
-  photo_src: string;
-  comment_count: number;
-  average_star: number;
-}
+const ProductListPage: React.FC = () => {
+  const products = useLoaderData() as Product[];
+  console.log("Yüklenen ürünler:", products); // Yüklenen ürünler konsolda görünüyor
 
-const ProductListPage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/products/best-sellers`);
-        const data = await response.json();
-
-        if (data.status === 'success' && Array.isArray(data.data)) {
-          setProducts(data.data);
-        } else {
-          console.error('Beklenmeyen API yanıtı:', data);
-        }
-      } catch (error) {
-        console.error('Veri çekme hatası:', error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  if (!products || products.length === 0) {
+    return <div>Ürün bulunamadı.</div>;
+  }
 
   return (
-    <div className="product-list">
-      {products.length > 0 ? (
-        products.map((product, index) => (
-          <ProductCard
-            key={index}
-            id={index}
-            name={product.name}
-            photo_src={`${import.meta.env.VITE_API_URL}${product.photo_src}`}
-            price_info={{
-              total_price: product.price_info.total_price,
-              discounted_price: product.price_info.discounted_price
-            }}
-          />
-        ))
-      ) : (
-        <p>Ürünler yükleniyor veya mevcut değil.</p>
-      )}
+    <div className="product-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {products.map((product) => (
+        <ProductCard
+          key={product.id}
+          id={product.id}
+          name={product.name}
+          photo_src={product.photo_src}
+          price_info={product.price_info}
+          comment_count={product.comment_count}
+          average_star={product.average_star}
+        />
+      ))}
     </div>
   );
 };

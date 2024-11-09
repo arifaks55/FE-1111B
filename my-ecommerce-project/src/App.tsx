@@ -12,7 +12,11 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "/", element: <HomePage />, loader: homeLoader },
-      { path: "/urunler", element: <ProductListPage />, loader: productListLoader },
+      {
+        path: "/urunler",
+        element: <ProductListPage />,
+        loader: productListLoader // Veriyi loader ile sağlıyoruz
+      },
       { path: "/urunler/:productId", element: <ProductDetailPage /> },
     ],
   },
