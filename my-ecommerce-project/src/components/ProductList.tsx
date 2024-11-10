@@ -16,7 +16,6 @@ interface ProductListProps {
     products: Product[];
 }
 
-const BASE_URL = import.meta.env.VITE_API_URL;
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
     return (
@@ -26,7 +25,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                     key={product.id}
                     id={product.id}
                     name={product.name}
-                    photo_src={`${BASE_URL}${product.photo_src}`}
+                    photo_src={`${product.photo_src}`}
                     comment_count={product.comment_count}
                     average_star={product.average_star}
                     price_info={{
