@@ -1,50 +1,91 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Product } from '../types/product';
 
-interface ProductCardProps {
-    id: number | string;
-    name: string;
-    photo_src: string;
-    price_info: {
-        total_price: number;
-        discounted_price?: number;
-    };
-    comment_count: number;
-    average_star: number;
-}
+type ProductCardProps = Product;
 
 const ProductCard: React.FC<ProductCardProps> = ({
-    id,
     name,
     photo_src,
     price_info,
-    comment_count,
-    average_star,
+    short_explanation,
 }) => {
-    const baseUrl = import.meta.env.VITE_API_URL;
+    const baseURL = import.meta.env.VITE_API_URL;
+
+    // Aroma ve boyut state'i
+    const [selectedAroma, setSelectedAroma] = useState<string | null>(null);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+
+    // Rastgele yorum sayısı ve puan state'i
+    const [commentCount, setCommentCount] = useState<number>(0);
+    const [averageStar, setAverageStar] = useState<number>(0);
+
+    // Aroma ve boyut seçenekleri
+    const aromaOptions = ["Çilek", "Çikolata", "Vanilya"];
+    const sizeOptions = ["500g", "1kg", "2kg"];
+
+    // Rastgele değerleri ayarlama
+    useEffect(() => {
+        // 0 ile 100 arasında rastgele bir yorum sayısı
+        setCommentCount(Math.floor(Math.random() * 100));
+
+        // 0 ile 5 arasında iki ondalık basamaklı rastgele bir puan
+        setAverageStar(parseFloat((Math.random() * 5).toFixed(1)));
+    }, []);
 
     return (
-        <div className="product-card border rounded-lg p-4" key={id}>
-            <img
-                src={`${baseUrl}${photo_src}`}
-                alt={name}
-                className="w-full h-48 object-cover rounded-md"
-            />
-            <h3 className="text-lg font-bold mt-2">{name}</h3>
-            <p className="text-sm text-gray-600">Yorum Sayısı: {comment_count}</p>
-            <p className="text-sm text-gray-600">Ortalama Yıldız: {average_star}</p>
-            <div className="flex items-center mt-4">
+        <div className="product-card border rounded-lg p-4 shadow-md">
+            <img src={`${baseURL}${photo_src}`} alt={name} className="w-full h-48 object-cover" />
+            <h3 className="text-lg font-semibold">{name}</h3>
+            <p>{short_explanation}</p>
+            <div>Yorum Sayısı: {commentCount}</div>
+            <div>Ortalama Puan: {averageStar}</div>
+            <div>
                 {price_info.discounted_price ? (
                     <>
-                        <span className="text-lg font-bold text-red-500">
-                            ₺{price_info.discounted_price}
-                        </span>
-                        <span className="text-sm text-gray-500 line-through ml-2">
-                            ₺{price_info.total_price}
-                        </span>
+                        <span className="line-through">{price_info.total_price} TL</span>
+                        <span className="text-red-500 font-bold"> {price_info.discounted_price} TL</span>
                     </>
                 ) : (
-                    <span className="text-lg font-bold">₺{price_info.total_price}</span>
+                    <span>{price_info.total_price} TL</span>
                 )}
+            </div>
+
+            {/* Aroma seçimi */}
+            <div className="mt-4">
+                <label htmlFor="aroma-select" className="block font-semibold">Aroma Seçin:</label>
+                <select
+                    id="aroma-select"
+                    value={selectedAroma || ""}
+                    onChange={(e) => setSelectedAroma(e.target.value)}
+                    className="w-full p-2 border rounded"
+                >
+                    <option value="" disabled>Aroma Seçin</option>
+                    {aromaOptions.map((aroma) => (
+                        <option key={aroma} value={aroma}>{aroma}</option>
+                    ))}
+                </select>
+            </div>
+
+            {/* Boyut seçimi */}
+            <div className="mt-4">
+                <label htmlFor="size-select" className="block font-semibold">Boyut Seçin:</label>
+                <select
+                    id="size-select"
+                    value={selectedSize || ""}
+                    onChange={(e) => setSelectedSize(e.target.value)}
+                    className="w-full p-2 border rounded"
+                >
+                    <option value="" disabled>Boyut Seçin</option>
+                    {sizeOptions.map((size) => (
+                        <option key={size} value={size}>{size}</option>
+                    ))}
+                </select>
+            </div>
+
+            {/* Seçilen aroma ve boyutu gösterme */}
+            <div className="mt-4">
+                <p>Seçilen Aroma: {selectedAroma || "Yok"}</p>
+                <p>Seçilen Boyut: {selectedSize || "Yok"}</p>
             </div>
         </div>
     );
