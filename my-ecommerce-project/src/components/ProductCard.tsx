@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div>Yorum Sayısı: {commentCount}</div>
             <div>Ortalama Puan: {averageStar}</div>
             <div>
-                {price_info.discounted_price ? (
+                {typeof price_info.discounted_price === 'number' ? (
                     <>
                         <span className="line-through">{price_info.total_price} TL</span>
                         <span className="text-red-500 font-bold"> {price_info.discounted_price} TL</span>
@@ -48,9 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 ) : (
                     <span>{price_info.total_price} TL</span>
                 )}
-            </div>
-
-            {/* Aroma seçimi */}
+            </div>            {/* Aroma seçimi */}
             <div className="mt-4">
                 <label htmlFor="aroma-select" className="block font-semibold">Aroma Seçin:</label>
                 <select

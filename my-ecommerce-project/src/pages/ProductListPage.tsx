@@ -5,7 +5,6 @@ import { Product } from '../types/product';
 
 const ProductListPage: React.FC = () => {
   const products = useLoaderData() as Product[];
-  console.log("Yüklenen ürünler:", products); // Yüklenen ürünler konsolda görünüyor
 
   if (!products || products.length === 0) {
     return <div>Ürün bulunamadı.</div>;
@@ -22,6 +21,8 @@ const ProductListPage: React.FC = () => {
           price_info={product.price_info}
           comment_count={product.comment_count}
           average_star={product.average_star}
+          short_explanation={product.short_explanation}
+          slug={product.slug}
         />
       ))}
     </div>

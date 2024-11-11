@@ -1,9 +1,9 @@
-export interface PriceInfo {
-    profit: number | null;
+export interface price_info {
     total_price: number;
-    discounted_price: number;
-    price_per_servings: number | null;
-    discount_percentage: number | null;
+    discounted_price?: number;
+    price_per_servings: number;
+    discount_percentage?: number;
+    profit?: number;
 }
 
 export interface Product {

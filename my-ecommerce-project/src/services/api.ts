@@ -13,7 +13,6 @@ export const getAllProducts = async (page: number = 1) => {
 
         // Yanıtın beklenen yapıda olup olmadığını kontrol etmek için log ekliyoruz
         const data = await response.json();
-        console.log("API yanıtı:", data);
 
         return data; // `data` doğrudan döndürülüyor
     } catch (error) {

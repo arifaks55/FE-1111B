@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductCard from './ProductCard';
+import ProductCard from '../components/ProductCard';
 
 interface Product {
     id: number;
@@ -32,6 +32,8 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                         total_price: product.price_info.total_price,
                         discounted_price: product.price_info.discounted_price
                     }}
+                    short_explanation={product.short_explanation || "Ürün açıklaması bulunmamaktadır."} // Varsayılan değer
+                    slug={product.slug || "no-slug"} // Varsayılan değer
                 />
             ))}
         </div>
