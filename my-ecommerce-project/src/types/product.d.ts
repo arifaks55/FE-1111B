@@ -1,4 +1,4 @@
-export interface price_info {
+export interface PriceInfo {
     total_price: number;
     discounted_price?: number;
     price_per_servings: number;
@@ -15,4 +15,5 @@ export interface Product {
     photo_src: string;
     comment_count: number;
     average_star: number;
+    description?: string;
 }

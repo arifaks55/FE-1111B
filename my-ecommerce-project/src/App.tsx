@@ -1,10 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import { homeLoader } from './loaders/homeLoader';
 import ProductListPage from './pages/ProductListPage';
-import { productListLoader } from './loaders/productListLoader';
 import ProductDetailPage from './pages/ProductDetailPage';
+import AboutPage from './pages/AboutPage';
+import FeedbackForm from './pages/FeedbackForm';
 import Layout from './components/Layout';
+import { homeLoader } from './loaders/homeLoader';
+import { productListLoader } from './loaders/productListLoader';
 
 const router = createBrowserRouter([
   {
@@ -12,12 +14,10 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "/", element: <HomePage />, loader: homeLoader },
-      {
-        path: "/urunler",
-        element: <ProductListPage />,
-        loader: productListLoader // Veriyi loader ile sağlıyoruz
-      },
+      { path: "/urunler", element: <ProductListPage />, loader: productListLoader },
       { path: "/urunler/:productId", element: <ProductDetailPage /> },
+      { path: "/hakkimizda", element: <AboutPage /> },
+      { path: "/feedback", element: <FeedbackForm /> },
     ],
   },
 ]);
