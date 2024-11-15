@@ -1,109 +1,134 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Product } from '../types/product';
+
+interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    short_explanation: string;
+    explanation: {
+        description: string;
+        usage: string;
+        features: string;
+    };
+    variants: Array<{
+        id: string;
+        aroma: string;
+        size: {
+            gram: number;
+            pieces: number;
+            total_services: number;
+        };
+        price: {
+            total_price: number;
+            discounted_price: number | null;
+            price_per_servings: number;
+        };
+        photo_src: string;
+        is_available: boolean;
+    }>;
+    photo_src: string;
+}
 
 const ProductDetailPage: React.FC = () => {
-    const { productId } = useParams<{ productId: string }>();
+    const { productIdentifier } = useParams<{ productIdentifier: string }>();
     const [product, setProduct] = useState<Product | null>(null);
-    const [selectedAroma, setSelectedAroma] = useState<string>('');
-    const [selectedSize, setSelectedSize] = useState<string>('');
-
-    const aromaOptions = ['Çilek', 'Çikolata', 'Vanilya'];
-    const sizeOptions = ['500g', '1kg', '2kg'];
+    const [selectedVariant, setSelectedVariant] = useState<Product['variants'][0] | null>(null);
 
     const baseURL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        if (!productId) {
-            console.error("Ürün ID'si eksik veya geçersiz!");
-            return;
-        }
-
         const fetchProduct = async () => {
+            if (!productIdentifier) {
+                console.error('Ürün kimliği belirtilmemiş.');
+                return;
+            }
+
             try {
-                // Doğru API çağrısını yapıyoruz
-                const response = await fetch(`${baseURL}/api/v1/products/${productId}`);
+                const response = await fetch(`${baseURL}/api/v1/products/${productIdentifier}`);
                 if (!response.ok) {
-                    console.error("Ürün bulunamadı veya API isteği başarısız.");
-                    return;
+                    throw new Error('Ürün bulunamadı veya API isteği başarısız.');
                 }
                 const data = await response.json();
-                setProduct(data);
+                setProduct(data.data);
+                setSelectedVariant(data.data.variants[0]); // Varsayılan olarak ilk varyantı seç
             } catch (error) {
-                console.error("Veri alınırken bir hata oluştu:", error);
+                console.error('Veri alınırken bir hata oluştu:', error);
             }
         };
 
         fetchProduct();
-    }, [productId, baseURL]);
-
-    const addToCart = () => {
-        if (selectedAroma && selectedSize && product) {
-            const cartItem = {
-                id: product.id,
-                name: product.name,
-                aroma: selectedAroma,
-                size: selectedSize,
-                price: product.price_info.total_price,
-            };
-            console.log('Sepete eklenen ürün:', cartItem);
-            alert(`${product.name} sepete eklendi.`);
-        } else {
-            alert('Lütfen aroma ve boyut seçiniz.');
-        }
-    };
+    }, [productIdentifier, baseURL]);
 
     if (!product) return <div>Yükleniyor...</div>;
 
-    // Resim URL'sini tam URL olarak oluşturuyoruz
-    const imageUrl = `${baseURL}${product.photo_src}`;
+    // Varyant seçimi
+    const handleVariantChange = (variantId: string) => {
+        const variant = product.variants.find((v) => v.id === variantId);
+        setSelectedVariant(variant || null);
+    };
 
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold">{product.name}</h1>
-            <img src={imageUrl} alt={product.name} className="w-full h-64 object-cover rounded-lg" />
-            <p>{product.description || 'Bu ürün için açıklama mevcut değil.'}</p>
+            <img
+                src={`${baseURL}${selectedVariant?.photo_src || product.photo_src}`}
+                alt={product.name}
+                className="w-full h-64 object-cover rounded-lg"
+            />
+            <p className="text-gray-600">{product.short_explanation}</p>
 
-            {/* Aroma Seçimi */}
+            {/* Açıklama */}
             <div className="mt-4">
-                <label htmlFor="aroma-select" className="block font-semibold">Aroma Seçin:</label>
+                <h2 className="text-xl font-semibold">Ürün Açıklaması</h2>
+                <p>{product.explanation.description}</p>
+            </div>
+
+            {/* Varyantlar */}
+            <div className="mt-4">
+                <label htmlFor="variant-select" className="block font-semibold">Aroma ve Boyut Seçin:</label>
                 <select
-                    id="aroma-select"
-                    value={selectedAroma}
-                    onChange={(e) => setSelectedAroma(e.target.value)}
+                    id="variant-select"
+                    value={selectedVariant?.id || ''}
+                    onChange={(e) => handleVariantChange(e.target.value)}
                     className="w-full p-2 border rounded"
                 >
-                    <option value="" disabled>Aroma Seçin</option>
-                    {aromaOptions.map((aroma) => (
-                        <option key={aroma} value={aroma}>{aroma}</option>
+                    {product.variants.map((variant) => (
+                        <option key={variant.id} value={variant.id}>
+                            {variant.aroma} - {variant.size.gram}g ({variant.size.total_services} servis)
+                        </option>
                     ))}
                 </select>
             </div>
 
-            {/* Boyut Seçimi */}
+            {/* Fiyat Bilgisi */}
             <div className="mt-4">
-                <label htmlFor="size-select" className="block font-semibold">Boyut Seçin:</label>
-                <select
-                    id="size-select"
-                    value={selectedSize}
-                    onChange={(e) => setSelectedSize(e.target.value)}
-                    className="w-full p-2 border rounded"
-                >
-                    <option value="" disabled>Boyut Seçin</option>
-                    {sizeOptions.map((size) => (
-                        <option key={size} value={size}>{size}</option>
-                    ))}
-                </select>
+                <h3 className="text-lg font-semibold">Fiyat Bilgisi</h3>
+                {selectedVariant && (
+                    <p>
+                        Toplam Fiyat: {selectedVariant.price.total_price}₺{' '}
+                        {selectedVariant.price.discounted_price && (
+                            <span className="text-red-500 line-through">
+                                {selectedVariant.price.discounted_price}₺
+                            </span>
+                        )}
+                    </p>
+                )}
             </div>
 
-            {/* Seçilen Aroma ve Boyut Gösterimi */}
+            {/* Kullanım Bilgisi */}
             <div className="mt-4">
-                <p>Seçilen Aroma: {selectedAroma || 'Seçilmedi'}</p>
-                <p>Seçilen Boyut: {selectedSize || 'Seçilmedi'}</p>
+                <h3 className="text-lg font-semibold">Kullanım Bilgisi</h3>
+                <p>{product.explanation.usage}</p>
             </div>
 
             {/* Sepete Ekle Butonu */}
-            <button onClick={addToCart} className="mt-4 bg-blue-500 text-white p-2 rounded">Sepete Ekle</button>
+            <button
+                onClick={() => alert(`${product.name} sepete eklendi!`)}
+                className="mt-4 bg-blue-500 text-white p-2 rounded"
+            >
+                Sepete Ekle
+            </button>
         </div>
     );
 };

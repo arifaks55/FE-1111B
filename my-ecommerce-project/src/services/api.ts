@@ -1,7 +1,7 @@
 export const getAllProducts = async (page: number = 1) => {
     const limit = 12;
     const offset = (page - 1) * limit;
-    const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = import.meta.env.VITE_BASE_URL;
 
     const url = `${apiUrl}/api/v1/products?limit=${limit}&offset=${offset}`;
 

@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage />, loader: homeLoader },
       { path: "/urunler", element: <ProductListPage />, loader: productListLoader },
-      { path: "/urunler/:productId", element: <ProductDetailPage /> },
+      { path: "/urunler/:productIdentifier", element: <ProductDetailPage /> },
       { path: "/hakkimizda", element: <AboutPage /> },
       { path: "/feedback", element: <FeedbackForm /> },
     ],
