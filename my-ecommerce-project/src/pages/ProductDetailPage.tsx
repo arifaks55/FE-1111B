@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 interface Product {
     id: string;
@@ -34,6 +34,7 @@ const ProductDetailPage: React.FC = () => {
     const { productIdentifier } = useParams<{ productIdentifier: string }>();
     const [product, setProduct] = useState<Product | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<Product['variants'][0] | null>(null);
+    const navigate = useNavigate(); // useNavigate hook'u ekleniyor
 
     const baseURL = import.meta.env.VITE_API_URL;
 
@@ -70,6 +71,13 @@ const ProductDetailPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4">
+            <button
+                onClick={() => navigate(-1)} // Geri gitmek için navigate kullanılıyor
+                className="mb-4 bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+            >
+                Geri Dön
+            </button>
+
             <h1 className="text-3xl font-bold">{product.name}</h1>
             <img
                 src={`${baseURL}${selectedVariant?.photo_src || product.photo_src}`}
