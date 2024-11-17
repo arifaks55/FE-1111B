@@ -7,16 +7,38 @@ export const getAllProducts = async (page: number = 1) => {
 
     try {
         const response = await fetch(url);
+
+        // Hata kontrolü
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            console.error(`HTTP error! status: ${response.status}, url: ${url}`);
+            return {
+                status: "error",
+                data: { count: 0, next: null, previous: null, results: [] },
+                error: `HTTP error! status: ${response.status}`,
+            };
         }
 
-        // Yanıtın beklenen yapıda olup olmadığını kontrol etmek için log ekliyoruz
+        // JSON verisini ayrıştır
         const data = await response.json();
 
-        return data; // `data` doğrudan döndürülüyor
+        // Yanıtın beklenen yapıya uygun olup olmadığını kontrol et
+        if (!data || !data.data || !Array.isArray(data.data.results)) {
+            console.error("Yanıt beklenen yapıda değil:", data);
+            return {
+                status: "error",
+                data: { count: 0, next: null, previous: null, results: [] },
+                error: "Yanıt beklenen yapıda değil",
+            };
+        }
+
+        return { status: "success", data: data.data }; // Beklenen veriyi döndür
     } catch (error) {
-        console.error("API isteği başarısız:", error);
-        return { status: "error", data: { count: 0, next: null, previous: null, results: [] } };
+        // Ağ veya beklenmeyen hataları yakala
+        console.error("API isteği sırasında hata oluştu:", error);
+        return {
+            status: "error",
+            data: { count: 0, next: null, previous: null, results: [] },
+            error: error instanceof Error ? error.message : "Bilinmeyen bir hata oluştu",
+        };
     }
 };

@@ -7,20 +7,14 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
+    if (!products.length) {
+        return <p className="text-center text-gray-500">Hiç ürün bulunamadı.</p>;
+    }
+
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product) => (
-                <ProductCard
-                    key={product.id || product.slug} // Benzersiz `id` yoksa `slug` kullan
-                    id={product.id}
-                    name={product.name}
-                    photo_src={product.photo_src}
-                    comment_count={product.comment_count}
-                    average_star={product.average_star}
-                    price_info={product.price_info}
-                    short_explanation={product.short_explanation}
-                    slug={product.slug}
-                />
+                <ProductCard key={product.id || product.slug} {...product} />
             ))}
         </div>
     );

@@ -34,14 +34,17 @@ const ProductDetailPage: React.FC = () => {
     const { productIdentifier } = useParams<{ productIdentifier: string }>();
     const [product, setProduct] = useState<Product | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<Product['variants'][0] | null>(null);
-    const navigate = useNavigate(); // useNavigate hook'u ekleniyor
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const baseURL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const fetchProduct = async () => {
             if (!productIdentifier) {
-                console.error('Ürün kimliği belirtilmemiş.');
+                setError('Ürün kimliği bulunamadı.');
+                setLoading(false);
                 return;
             }
 
@@ -54,16 +57,38 @@ const ProductDetailPage: React.FC = () => {
                 setProduct(data.data);
                 setSelectedVariant(data.data.variants[0]); // Varsayılan olarak ilk varyantı seç
             } catch (error) {
-                console.error('Veri alınırken bir hata oluştu:', error);
+                setError('Veri alınırken bir hata oluştu.');
+                console.error(error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchProduct();
     }, [productIdentifier, baseURL]);
 
-    if (!product) return <div>Yükleniyor...</div>;
+    if (loading) {
+        return <div className="text-center py-10">Ürün bilgisi yükleniyor...</div>;
+    }
 
-    // Varyant seçimi
+    if (error) {
+        return (
+            <div className="text-center py-10 text-red-500">
+                <p>{error}</p>
+                <button
+                    onClick={() => navigate(-1)}
+                    className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                >
+                    Geri Dön
+                </button>
+            </div>
+        );
+    }
+
+    if (!product) {
+        return <div className="text-center py-10">Ürün bulunamadı.</div>;
+    }
+
     const handleVariantChange = (variantId: string) => {
         const variant = product.variants.find((v) => v.id === variantId);
         setSelectedVariant(variant || null);
@@ -72,29 +97,27 @@ const ProductDetailPage: React.FC = () => {
     return (
         <div className="container mx-auto p-4">
             <button
-                onClick={() => navigate(-1)} // Geri gitmek için navigate kullanılıyor
+                onClick={() => navigate(-1)}
                 className="mb-4 bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
             >
                 Geri Dön
             </button>
 
-            <h1 className="text-3xl font-bold">{product.name}</h1>
+            <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
             <img
                 src={`${baseURL}${selectedVariant?.photo_src || product.photo_src}`}
                 alt={product.name}
                 className="w-full h-64 object-cover rounded-lg"
             />
-            <p className="text-gray-600">{product.short_explanation}</p>
+            <p className="text-gray-600 mt-4">{product.short_explanation}</p>
 
-            {/* Açıklama */}
-            <div className="mt-4">
+            <div className="mt-8">
                 <h2 className="text-xl font-semibold">Ürün Açıklaması</h2>
-                <p>{product.explanation.description}</p>
+                <p className="mt-2 text-gray-800">{product.explanation.description}</p>
             </div>
 
-            {/* Varyantlar */}
-            <div className="mt-4">
-                <label htmlFor="variant-select" className="block font-semibold">Aroma ve Boyut Seçin:</label>
+            <div className="mt-8">
+                <label htmlFor="variant-select" className="block font-semibold mb-2">Aroma ve Boyut Seçin:</label>
                 <select
                     id="variant-select"
                     value={selectedVariant?.id || ''}
@@ -109,14 +132,13 @@ const ProductDetailPage: React.FC = () => {
                 </select>
             </div>
 
-            {/* Fiyat Bilgisi */}
-            <div className="mt-4">
+            <div className="mt-8">
                 <h3 className="text-lg font-semibold">Fiyat Bilgisi</h3>
                 {selectedVariant && (
                     <p>
-                        Toplam Fiyat: {selectedVariant.price.total_price}₺{' '}
+                        <span>Toplam Fiyat: {selectedVariant.price.total_price}₺</span>
                         {selectedVariant.price.discounted_price && (
-                            <span className="text-red-500 line-through">
+                            <span className="text-red-500 line-through ml-2">
                                 {selectedVariant.price.discounted_price}₺
                             </span>
                         )}
@@ -124,16 +146,14 @@ const ProductDetailPage: React.FC = () => {
                 )}
             </div>
 
-            {/* Kullanım Bilgisi */}
-            <div className="mt-4">
+            <div className="mt-8">
                 <h3 className="text-lg font-semibold">Kullanım Bilgisi</h3>
-                <p>{product.explanation.usage}</p>
+                <p className="text-gray-800">{product.explanation.usage}</p>
             </div>
 
-            {/* Sepete Ekle Butonu */}
             <button
                 onClick={() => alert(`${product.name} sepete eklendi!`)}
-                className="mt-4 bg-blue-500 text-white p-2 rounded"
+                className="mt-8 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
                 Sepete Ekle
             </button>
