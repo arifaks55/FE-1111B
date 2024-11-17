@@ -1,99 +1,119 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+
+interface SubChild {
+    name: string;
+    slug: string;
+    order: number;
+}
+
+interface Child {
+    id: string;
+    name: string;
+    slug: string;
+    order: number;
+    sub_children: SubChild[];
+}
+
+interface TopSeller {
+    name: string;
+    slug: string;
+    description: string;
+    picture_src: string;
+}
 
 interface Category {
-    title: string;
-    image: string;
-}
-
-interface ProductDescription {
-    description: string;
-}
-
-interface CustomerReview {
     id: string;
-    message: string;
-    customerName: string;
+    name: string;
+    slug: string;
+    order: number;
+    children: Child[];
+    top_sellers: TopSeller[];
 }
 
 const AboutPage: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
-    const [description, setDescription] = useState<string>('');
-    const [customerReviews, setCustomerReviews] = useState<CustomerReview[]>([]);
-
     const baseURL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchCategories = async () => {
             try {
-                // Kategorileri ve açıklamayı API'den çek
-                const [categoriesRes, descriptionRes, reviewsRes] = await Promise.all([
-                    fetch(`${baseURL}/api/v1/categories`),
-                    fetch(`${baseURL}/api/v1/about-description`),
-                    fetch(`${baseURL}/api/v1/customer-reviews`),
-                ]);
-
-                const categoriesData = await categoriesRes.json();
-                const descriptionData = await descriptionRes.json();
-                const reviewsData = await reviewsRes.json();
-
-                if (categoriesData.status === 'success') setCategories(categoriesData.data);
-                if (descriptionData.status === 'success') setDescription(descriptionData.data.description);
-                if (reviewsData.status === 'success') setCustomerReviews(reviewsData.data.results);
+                const response = await fetch(`${baseURL}/api/v1/categories`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                setCategories(data.data.data); // API'den gelen kategori verisi
             } catch (error) {
-                console.error('Veri çekilirken bir hata oluştu:', error);
+                console.error("Kategoriler alınamadı:", error);
             }
         };
 
-        fetchData();
+        fetchCategories();
     }, [baseURL]);
+
+    if (categories.length === 0) {
+        return <div>Yükleniyor...</div>;
+    }
 
     return (
         <div className="bg-gray-100">
-            {/* Hero Section */}
+            {/* Hero Bölümü */}
             <div className="relative bg-blue-500 h-[400px]">
                 <div className="container mx-auto flex justify-center items-center h-full">
                     <div className="text-center text-white">
                         <h1 className="text-4xl font-bold">Hakkımızda</h1>
-                        <p className="mt-4 text-lg">Kalite ve müşteri memnuniyeti odaklı bir marka.</p>
+                        <p className="mt-4 text-lg">
+                            Kalite ve müşteri memnuniyeti odaklı bir marka.
+                        </p>
                     </div>
                 </div>
             </div>
 
-            {/* Kategori Bilgileri */}
-            <div className="container mx-auto mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-                {categories.map((category, index) => (
-                    <div
-                        key={index}
-                        className="bg-white rounded-lg shadow-lg text-center p-4 hover:shadow-xl transition"
-                    >
-                        <img src={`${baseURL}${category.image}`} alt={category.title} className="w-24 h-24 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold">{category.title}</h3>
+            {/* Kategoriler ve Alt Kategoriler */}
+            <div className="container mx-auto my-8">
+                {categories.map((category) => (
+                    <div key={category.id} className="mb-12">
+                        {/* Ana Kategori Başlığı */}
+                        <h2 className="text-2xl font-bold text-blue-500 mb-4">
+                            {category.name}
+                        </h2>
+
+                        {/* Alt Kategoriler */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {category.children.map((child) => (
+                                <div key={child.id} className="bg-white shadow-md rounded-lg p-4">
+                                    <h3 className="text-xl font-semibold mb-2">{child.name}</h3>
+                                    <ul className="list-disc ml-5 text-gray-700">
+                                        {child.sub_children.map((subChild) => (
+                                            <li key={subChild.slug}>{subChild.name}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Çok Satanlar */}
+                        <h3 className="text-xl font-semibold mt-8 mb-4">
+                            Çok Satanlar - {category.name}
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {category.top_sellers.map((seller) => (
+                                <div
+                                    key={seller.slug}
+                                    className="bg-white shadow-lg rounded-lg p-4 text-center"
+                                >
+                                    <img
+                                        src={`${baseURL}${seller.picture_src}`}
+                                        alt={seller.name}
+                                        className="w-full h-32 object-cover rounded-md mb-4"
+                                    />
+                                    <h4 className="text-lg font-semibold">{seller.name}</h4>
+                                    <p className="text-gray-600 text-sm">{seller.description}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 ))}
-            </div>
-
-            {/* Hakkımızda Açıklama */}
-            <div className="container mx-auto my-12 p-8 bg-white shadow-md rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Laboratuvar Testli Ürünler</h2>
-                <p className="text-gray-600">{description}</p>
-            </div>
-
-            {/* Görüşler */}
-            <div className="bg-gray-200 py-8">
-                <div className="container mx-auto">
-                    <h2 className="text-center text-2xl font-bold mb-6">Müşteri Yorumları</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {customerReviews.map((review) => (
-                            <div
-                                key={review.id}
-                                className="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition"
-                            >
-                                <p className="text-gray-800">{review.message}</p>
-                                <p className="mt-4 text-sm text-gray-500">- {review.customerName}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
             </div>
 
             {/* Footer */}
