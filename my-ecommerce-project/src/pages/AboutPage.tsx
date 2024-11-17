@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { AcademicCapIcon, ChevronRightIcon, StarIcon } from '@heroicons/react/20/solid';
+
 
 interface SubChild {
     name: string;
@@ -74,7 +76,8 @@ const AboutPage: React.FC = () => {
                 {categories.map((category) => (
                     <div key={category.id} className="mb-12">
                         {/* Ana Kategori Başlığı */}
-                        <h2 className="text-2xl font-bold text-blue-500 mb-4">
+                        <h2 className="text-2xl font-bold text-blue-500 mb-4 flex items-center">
+                            <AcademicCapIcon className="w-6 h-6 text-blue-400 mr-2" />
                             {category.name}
                         </h2>
 
@@ -83,9 +86,15 @@ const AboutPage: React.FC = () => {
                             {category.children.map((child) => (
                                 <div key={child.id} className="bg-white shadow-md rounded-lg p-4">
                                     <h3 className="text-xl font-semibold mb-2">{child.name}</h3>
-                                    <ul className="list-disc ml-5 text-gray-700">
+                                    <ul className="list-none ml-0 text-gray-700">
                                         {child.sub_children.map((subChild) => (
-                                            <li key={subChild.slug}>{subChild.name}</li>
+                                            <li
+                                                key={subChild.slug}
+                                                className="flex items-center mb-1"
+                                            >
+                                                <ChevronRightIcon className="w-5 h-5 text-gray-500 mr-2" />
+                                                {subChild.name}
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
@@ -93,7 +102,8 @@ const AboutPage: React.FC = () => {
                         </div>
 
                         {/* Çok Satanlar */}
-                        <h3 className="text-xl font-semibold mt-8 mb-4">
+                        <h3 className="text-xl font-semibold mt-8 mb-4 flex items-center">
+                            <StarIcon className="w-6 h-6 text-yellow-500 mr-2" />
                             Çok Satanlar - {category.name}
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

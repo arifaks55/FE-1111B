@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 
 interface Product {
     id: string;
@@ -68,13 +69,18 @@ const ProductDetailPage: React.FC = () => {
     }, [productIdentifier, baseURL]);
 
     if (loading) {
-        return <div className="text-center py-10">Ürün bilgisi yükleniyor...</div>;
+        return (
+            <div className="flex justify-center items-center py-10">
+                <div className="loader border-t-4 border-blue-500 rounded-full w-16 h-16 animate-spin"></div>
+            </div>
+        );
     }
 
     if (error) {
         return (
             <div className="text-center py-10 text-red-500">
-                <p>{error}</p>
+                <ExclamationCircleIcon className="h-8 w-8 text-red-500 mx-auto" />
+                <p className="mt-4">{error}</p>
                 <button
                     onClick={() => navigate(-1)}
                     className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
@@ -107,9 +113,9 @@ const ProductDetailPage: React.FC = () => {
             <img
                 src={`${baseURL}${selectedVariant?.photo_src || product.photo_src}`}
                 alt={product.name}
-                className="w-full h-64 object-cover rounded-lg"
+                className="w-full h-64 object-cover rounded-lg mb-4"
             />
-            <p className="text-gray-600 mt-4">{product.short_explanation}</p>
+            <p className="text-gray-600">{product.short_explanation}</p>
 
             <div className="mt-8">
                 <h2 className="text-xl font-semibold">Ürün Açıklaması</h2>

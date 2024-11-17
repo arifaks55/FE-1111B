@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../types/product';
+import { FaShoppingCart, FaInfoCircle } from 'react-icons/fa';
 
 const ProductCard: React.FC<Product> = ({
     name,
@@ -23,21 +24,28 @@ const ProductCard: React.FC<Product> = ({
             />
             <div className="flex flex-col flex-grow">
                 <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
-                <p className="text-sm text-gray-600">{short_explanation}</p>
-                <div className="mt-auto">
-                    {price_info.discounted_price ? (
-                        <>
-                            <span className="line-through text-gray-500">{price_info.total_price} TL</span>
-                            <span className="text-red-500 font-bold ml-2">
-                                {price_info.discounted_price} TL
-                            </span>
-                        </>
-                    ) : (
-                        <span className="text-gray-800 font-bold">{price_info.total_price} TL</span>
-                    )}
+                <p className="text-sm text-gray-600 flex items-center space-x-2">
+                    <FaInfoCircle className="text-blue-500" />
+                    <span>{short_explanation}</span>
+                </p>
+                <div className="mt-auto flex items-center justify-between">
+                    <div>
+                        {price_info.discounted_price ? (
+                            <>
+                                <span className="line-through text-gray-500">{price_info.total_price} TL</span>
+                                <span className="text-red-500 font-bold ml-2">
+                                    {price_info.discounted_price} TL
+                                </span>
+                            </>
+                        ) : (
+                            <span className="text-gray-800 font-bold">{price_info.total_price} TL</span>
+                        )}
+                    </div>
+                    <FaShoppingCart className="text-green-500 text-xl hover:text-green-700 cursor-pointer" />
                 </div>
             </div>
-        </Link>);
+        </Link>
+    );
 };
 
 export default ProductCard;

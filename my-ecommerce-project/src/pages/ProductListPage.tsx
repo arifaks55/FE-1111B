@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ProductList from '../components/ProductList';
 import { Product } from '../types/product';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
 const ProductListPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -54,13 +55,20 @@ const ProductListPage: React.FC = () => {
     const endPage = Math.min(totalPages, startPage + visiblePages - 1);
 
     return (
-      <>
+      <div className="flex items-center space-x-2">
+        <button
+          onClick={() => goToPage(1)}
+          disabled={page === 1}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          İlk Sayfa
+        </button>
         <button
           onClick={() => goToPage(page - 1)}
           disabled={page === 1}
-          className="px-3 py-1 border rounded mx-1 disabled:opacity-50"
+          className="px-3 py-1 border rounded disabled:opacity-50"
         >
-          Önceki
+          <ChevronLeftIcon className="h-5 w-5" />
         </button>
         {[...Array(endPage - startPage + 1)].map((_, index) => {
           const pageIndex = startPage + index;
@@ -68,7 +76,7 @@ const ProductListPage: React.FC = () => {
             <button
               key={pageIndex}
               onClick={() => goToPage(pageIndex)}
-              className={`px-3 py-1 border rounded mx-1 ${page === pageIndex ? 'bg-blue-500 text-white' : ''}`}
+              className={`px-3 py-1 border rounded ${page === pageIndex ? 'bg-blue-500 text-white' : ''}`}
             >
               {pageIndex}
             </button>
@@ -77,26 +85,38 @@ const ProductListPage: React.FC = () => {
         <button
           onClick={() => goToPage(page + 1)}
           disabled={page === totalPages}
-          className="px-3 py-1 border rounded mx-1 disabled:opacity-50"
+          className="px-3 py-1 border rounded disabled:opacity-50"
         >
-          Sonraki
+          <ChevronRightIcon className="h-5 w-5" />
         </button>
-      </>
+        <button
+          onClick={() => goToPage(totalPages)}
+          disabled={page === totalPages}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Son Sayfa
+        </button>
+      </div>
     );
   };
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Ürün Listesi</h1>
+      <p className="text-sm text-gray-500 mb-4">
+        Toplam {totalCount} ürün bulundu. Sayfa {page} / {totalPages}
+      </p>
 
       {loading ? (
-        <div className="text-center">Yükleniyor...</div>
+        <div className="flex justify-center py-10">
+          <div className="loader border-t-4 border-blue-500 rounded-full w-16 h-16 animate-spin"></div>
+        </div>
       ) : error ? (
         <div className="text-center text-red-500">{error}</div>
       ) : (
         <>
           <ProductList products={products} />
-          <div className="pagination mt-4 flex justify-center items-center">{renderPagination()}</div>
+          <div className="pagination mt-4 flex justify-center">{renderPagination()}</div>
         </>
       )}
     </div>

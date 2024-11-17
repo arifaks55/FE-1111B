@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa'; // React Icons kütüphanesi ile Heroicons yerine alternatif kullanılıyor.
 
 const Footer: React.FC = () => (
     <footer className="p-6 bg-gray-800 text-white text-center">
@@ -10,9 +11,10 @@ const Footer: React.FC = () => (
                         href="https://www.facebook.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:underline"
+                        className="hover:underline flex items-center space-x-2"
                     >
-                        Facebook
+                        <FaFacebook className="w-5 h-5 text-blue-500" />
+                        <span>Facebook</span>
                     </a>
                 </li>
                 <li>
@@ -20,9 +22,10 @@ const Footer: React.FC = () => (
                         href="https://www.twitter.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:underline"
+                        className="hover:underline flex items-center space-x-2"
                     >
-                        Twitter
+                        <FaTwitter className="w-5 h-5 text-blue-400" />
+                        <span>Twitter</span>
                     </a>
                 </li>
                 <li>
@@ -30,9 +33,10 @@ const Footer: React.FC = () => (
                         href="https://www.instagram.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:underline"
+                        className="hover:underline flex items-center space-x-2"
                     >
-                        Instagram
+                        <FaInstagram className="w-5 h-5 text-pink-400" />
+                        <span>Instagram</span>
                     </a>
                 </li>
                 <li>
@@ -40,9 +44,10 @@ const Footer: React.FC = () => (
                         href="https://www.linkedin.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:underline"
+                        className="hover:underline flex items-center space-x-2"
                     >
-                        LinkedIn
+                        <FaLinkedin className="w-5 h-5 text-blue-700" />
+                        <span>LinkedIn</span>
                     </a>
                 </li>
             </ul>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/20/solid';
 
 const FeedbackForm: React.FC = () => {
     const [name, setName] = useState('');
@@ -49,8 +50,18 @@ const FeedbackForm: React.FC = () => {
         <div className="container mx-auto p-4 max-w-md">
             <h2 className="text-2xl font-bold mb-4">Geri Bildirim</h2>
             <form onSubmit={handleSubmit}>
-                {error && <p className="text-red-500 mb-4">{error}</p>} {/* Hata mesajı */}
-                {success && <p className="text-green-500 mb-4">{success}</p>} {/* Başarı mesajı */}
+                {error && (
+                    <div className="flex items-center text-red-500 mb-4">
+                        <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                        <p>{error}</p>
+                    </div>
+                )}
+                {success && (
+                    <div className="flex items-center text-green-500 mb-4">
+                        <CheckCircleIcon className="h-5 w-5 mr-2" />
+                        <p>{success}</p>
+                    </div>
+                )}
                 <div>
                     <label className="block font-semibold mb-2">Adınız</label>
                     <input
@@ -70,14 +81,28 @@ const FeedbackForm: React.FC = () => {
                         placeholder="Mesajınızı yazın"
                     ></textarea>
                 </div>
-                <button
-                    type="submit"
-                    className={`mt-4 bg-blue-500 text-white p-2 rounded ${loading ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                    disabled={loading}
-                >
-                    {loading ? 'Gönderiliyor...' : 'Gönder'}
-                </button>
+                <div className="flex justify-between items-center mt-4">
+                    <button
+                        type="submit"
+                        className={`bg-blue-500 text-white p-2 rounded ${loading ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                        disabled={loading}
+                    >
+                        {loading ? 'Gönderiliyor...' : 'Gönder'}
+                    </button>
+                    <button
+                        type="button"
+                        className="bg-gray-500 text-white p-2 rounded"
+                        onClick={() => {
+                            setName('');
+                            setMessage('');
+                            setError('');
+                            setSuccess('');
+                        }}
+                    >
+                        Reset
+                    </button>
+                </div>
             </form>
         </div>
     );
