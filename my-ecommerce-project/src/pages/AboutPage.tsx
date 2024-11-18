@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AcademicCapIcon, ChevronRightIcon, StarIcon } from '@heroicons/react/20/solid';
-
+import bannerImage from '../assets/bio_whey_banner_1_1.webp';
 
 interface SubChild {
     name: string;
@@ -61,16 +61,33 @@ const AboutPage: React.FC = () => {
         <div className="bg-gray-100">
             {/* Hero Bölümü */}
             <div className="relative bg-blue-500 h-[400px]">
-                <div className="container mx-auto flex justify-center items-center h-full">
+                {/* Banner Arka Plan Görseli */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{
+                        backgroundImage: `url(${bannerImage})`,
+                    }}
+                >
+                    {/* Arka Plan Karartma */}
+                    <div className="absolute inset-0 bg-black opacity-50"></div>
+                </div>
+
+                {/* İçerik */}
+                <div className="relative container mx-auto flex justify-center items-center h-full">
                     <div className="text-center text-white">
-                        <h1 className="text-4xl font-bold">Hakkımızda</h1>
+                        <h1 className="text-4xl font-bold">OJS Nutrition</h1>
                         <p className="mt-4 text-lg">
                             Kalite ve müşteri memnuniyeti odaklı bir marka.
                         </p>
+                        <p className="mt-2 text-sm">
+                            Sağlıklı yaşamın ihtiyaçlarına göre şekillenen ürünler sunuyoruz.
+                        </p>
+                        <button className="mt-6 px-6 py-2 bg-yellow-500 text-black rounded-md hover:bg-yellow-400">
+                            Daha Fazla Bilgi Al
+                        </button>
                     </div>
                 </div>
             </div>
-
             {/* Kategoriler ve Alt Kategoriler */}
             <div className="container mx-auto my-8">
                 {categories.map((category) => (
